@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="navbar is-success"
+    class="navbar is-warning"
     aria-label="main navigation"
     role="navigation"
   >
