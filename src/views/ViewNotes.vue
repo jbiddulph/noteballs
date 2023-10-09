@@ -1,36 +1,26 @@
 <template>
   <div class="notes">
 
-    <div class="card has-background-warning-dark p-4 mb-5">
-      <div class="field">
-        <div class="control">
-          <textarea
-            v-model="newNote"
-            class="textarea"
-            placeholder="Add a new note"
-            ref="newNoteRef"
-          />
-        </div>
-      </div>
-
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          <button
+    <AddEditNote
+      v-model="newNote"
+      placeholder="Add a new note"
+      ref="addEditNoteRef"
+    >
+      <template #buttons>
+        <button
             @click="addNote"
             :disabled="!newNote"
-            class="button is-link has-background-warning">Add
+            class="button is-link has-background-warning has-text-grey-dark">Add
             new
             note</button
           >
-        </div>
-      </div>
-    </div>
-
+      </template>
+    </AddEditNote>
+    
     <Note 
-      v-for="note in notes"
+      v-for="note in storeNotes.notes"
       :key="note.id"
       :note="note"
-      @deleteClicked="deleteNote"
     />
     
   </div>
@@ -40,36 +30,26 @@
 /* imports */
 import { ref } from 'vue'
 import Note from '@/components/notes/Note.vue'
+import AddEditNote from '@/components/notes/AddEditNote.vue'
+import { useStoreNotes } from '@/stores/storeNotes'
+/* Store */
+const storeNotes = useStoreNotes()
 /* notes */
 const newNote = ref('')
-const newNoteRef = ref(null)
-
-const notes = ref([
-  {
-    id: 1,
-    content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum nobis corrupti, veritatis suscipit accusantium ipsum nesciunt? Facilis reiciendis accusantium ipsam laborum qui omnis quibusdam autem voluptas nulla, maiores deleniti perferendis!,'
-  },
-  {
-    id: 2,
-    content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. maiores deleniti perferendis'
-  }
-])
+const addEditNoteRef = ref(null)
 
 const addNote = () => {
-  let curDate = new Date().getTime()
-  let id = curDate.toString()
-  let note = {
-    id,
-    content: newNote.value
-  }
-  notes.value.unshift(note)
-
+  storeNotes.addNote(newNote.value)
   newNote.value = ''
-  newNoteRef.value.focus()
+  addEditNoteRef.value.focusTextArea()
 }
 
-/* DeleteNote */
-const deleteNote = idToDelete => {
-  notes.value = notes.value.filter(note => { return note.id !== idToDelete })
-}
 </script>
+
+<style>
+input:focus,
+textarea:focus {
+  border-color: yellow; /* Change this to the desired color */
+  box-shadow: 0 0 0 0.125em rgb(255, 205, 0); /* Optional: Add a shadow for better visibility */
+}
+</style>
