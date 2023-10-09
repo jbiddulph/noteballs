@@ -16,12 +16,15 @@
           class="textarea"
           :placeholder="placeholder"
           ref="textareaRef"
+          maxlength="100"
+          v-autofocus
         />
       </div>
     </div>
 
-    <div class="field is-grouped is-grouped-right">
-      <div class="control">
+    <div class="field ">
+      <div class="control is-flex is-fullwidth 
+        is-justify-content-space-between is-flex-direction-row">
         <slot name="buttons" />
       </div>
     </div>
@@ -31,6 +34,7 @@
 <script setup>
 /* */
 import { ref } from 'vue'
+import { vAutofocus } from '@/directives/vAutofocus.js'
 /* Props */
 const props = defineProps({
   modelValue: {
@@ -63,6 +67,7 @@ const focusTextArea = () => {
 defineExpose({
   focusTextArea
 })
+
 </script>
 
 <style>

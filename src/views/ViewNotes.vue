@@ -7,6 +7,11 @@
       ref="addEditNoteRef"
     >
       <template #buttons>
+        
+        <div 
+          class="has-text-weight-bold has-text-centered p-2 m-0"
+          :class="limitedChars ? 'has-text-danger' : 'has-text-warning'"
+        >{{ newNote.length }}</div>
         <button
             @click="addNote"
             :disabled="!newNote"
@@ -32,6 +37,7 @@ import { ref } from 'vue'
 import Note from '@/components/notes/Note.vue'
 import AddEditNote from '@/components/notes/AddEditNote.vue'
 import { useStoreNotes } from '@/stores/storeNotes'
+import { limitedChars, useWatchCharacters } from '@/use/useWatchCharacters.js'
 /* Store */
 const storeNotes = useStoreNotes()
 /* notes */
@@ -44,6 +50,8 @@ const addNote = () => {
   addEditNoteRef.value.focusTextArea()
 }
 
+/* watch chars */
+useWatchCharacters(newNote)
 </script>
 
 <style>
