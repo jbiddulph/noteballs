@@ -21,19 +21,36 @@
           >
       </template>
     </AddEditNote>
-    
-    <Note 
-      v-for="note in storeNotes.notes"
-      :key="note.id"
-      :note="note"
+
+    <progress
+      v-if="!storeNotes.notesLoaded"
+      class="progress is-large is-warning"
+      max="100"
     />
+
+    <template
+      v-else
+    >
+      <Note 
+        v-for="note in storeNotes.notes"
+        :key="note.id"
+        :note="note"
+      />
+
+      <div
+        v-if="!storeNotes.notes.length"
+        class="is-size-4 has-text-centered has-text-grey-light is-family-monospace py-6"
+      >
+        There are currently no notes 
+      </div>
+    </template>
     
   </div>
 </template>
 
 <script setup>
 /* imports */
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Note from '@/components/notes/Note.vue'
 import AddEditNote from '@/components/notes/AddEditNote.vue'
 import { useStoreNotes } from '@/stores/storeNotes'
@@ -52,6 +69,11 @@ const addNote = () => {
 
 /* watch chars */
 useWatchCharacters(newNote)
+
+/* Mounted */
+onMounted(() => {
+  storeNotes.getNotes()
+})
 </script>
 
 <style>

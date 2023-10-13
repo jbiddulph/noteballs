@@ -1,37 +1,56 @@
 // stores/counter.js
 import { defineStore } from 'pinia'
+import { 
+  collection, doc, onSnapshot, 
+  addDoc, deleteDoc, updateDoc, 
+  query, orderBy 
+} from 'firebase/firestore' 
+import { db } from '@/js/firebase'
+
+const notesCollectionRef = collection(db, 'notes')
+const notesCollectionQuery = query(notesCollectionRef, orderBy('date', 'desc'))
+
 
 export const useStoreNotes = defineStore('storeNotes', {
   state: () => {
     return { 
-      notes: [
-        {
-          id: '1',
-          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum nobis corrupti, veritatis suscipit accusantium ipsum nesciunt? Facilis reiciendis accusantium ipsam laborum qui omnis quibusdam autem voluptas nulla, maiores deleniti perferendis!,'
-        },
-        {
-          id: '2',
-          content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. maiores deleniti perferendis'
-        }
-      ]
+      notes: [],
+      notesLoaded: false,
      }
   },
   actions: {
-    addNote(newNoteContent) {
+    async getNotes() {
+      this.notesLoaded = false
+      onSnapshot(notesCollectionQuery, (querySnapshot) => {
+        let notes = []
+        querySnapshot.forEach((doc) => {
+          let note = {
+            id: doc.id,
+            content: doc.data().content,
+            date: doc.data().date,
+          }
+          notes.push(note)
+        })
+        this.notes = notes
+        this.notesLoaded = true
+      })
+    },
+    async addNote(newNoteContent) {
       let curDate = new Date().getTime()
-      let id = curDate.toString()
-      let note = {
-        id,
-        content: newNoteContent
-      }
-      this.notes.unshift(note)
+      let date = curDate.toString()
+      // this.notes.unshift(note)
+      await addDoc(notesCollectionRef, {
+        content: newNoteContent,
+        date
+      })
     },
-    updateNote(id, content) {
-      let index = this.notes.findIndex(note => note.id === id)
-      this.notes[index].content = content
+    async updateNote(id, content) {
+      await updateDoc(doc(notesCollectionRef, id), {
+        content
+      });
     },
-    deleteNote(idToDelete) {
-      this.notes = this.notes.filter(note => note.id !== idToDelete)
+    async deleteNote(idToDelete) {
+      await deleteDoc(doc(notesCollectionRef, idToDelete))
     }
   },
   getters: {

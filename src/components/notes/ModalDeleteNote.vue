@@ -25,7 +25,7 @@
           Cancel
         </button>
         <button
-        @click="storeNotes.deleteNote(noteId)"
+          @click="storeNotes.deleteNote(noteId)"
           class="button is-danger"
         >
           Delete
